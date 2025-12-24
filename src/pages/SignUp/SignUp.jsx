@@ -29,9 +29,9 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-white">
-      <div className="w-full max-w-md p-6 rounded-lg bg-gray-100 shadow">
-        <h1 className="text-4xl font-bold text-center mb-6">Register</h1>
+    <div className="flex justify-center items-center min-h-screen bg-base-100">
+      <div className="w-full max-w-md p-6 rounded-lg bg-base-100 shadow">
+        <h1 className="text-4xl font-bold text-center mb-6">Sign Up</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           
           <input {...register("name", { required: "Name is required" })} placeholder="Full Name" className="input input-bordered w-full" />
@@ -62,13 +62,13 @@ const SignUp = () => {
           />
           {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
 
-          <button type="submit" className="btn btn-primary w-full">
-            {loading ? <TbFidgetSpinner className="animate-spin mx-auto" /> : "Register"}
+          <button type="submit" className="btn btn-gradient w-full">
+            {loading ? <TbFidgetSpinner className="animate-spin mx-auto" /> : "Sign Up"}
           </button>
         </form>
 
         <p className="text-center mt-4 text-sm">
-          Already have an account? <Link to="/login" className="text-blue-500">Login</Link>
+          Already have an account? <Link to="/login" className="text-pink-400">Login</Link>
         </p>
       </div>
     </div>

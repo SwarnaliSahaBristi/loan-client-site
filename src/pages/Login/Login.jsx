@@ -58,11 +58,11 @@ const Login = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-screen bg-white">
-      <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900">
+    <div className="flex justify-center items-center min-h-screen bg-base-100">
+      <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-base-100 text-base-content">
         <div className="mb-8 text-center">
           <h1 className="my-3 text-4xl font-bold">Log In</h1>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-base-content">
             Sign in to access your account
           </p>
         </div>
@@ -132,7 +132,7 @@ const Login = () => {
           <Link
             state={from}
             to="/signup"
-            className="hover:underline hover:text-lime-500 text-gray-600"
+            className="hover:underline hover:text-pink-500 text-base-content"
           >
             Sign up
           </Link>
