@@ -17,28 +17,30 @@ const AllLoans = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
 
-  // Debounced search value
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
-  // Update debounced value after user stops typing
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);; // reset to first page on search
-    }, 500); 
+      setPage(1);
+    }, 500);
 
-    return () => clearTimeout(handler); // cleanup
+    return () => clearTimeout(handler);
   }, [search]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["loans", page, debouncedSearch, status],
     queryFn: async () => {
-      const res = await axiosSecure.get("/loans", {
-        params: { page, limit, search: debouncedSearch, status },
+      const res = await axiosSecure.get("/all-loans", {
+        params: {
+          page,
+          limit,
+          search: debouncedSearch,
+          category: status,
+        },
       });
       return res.data;
     },
-    keepPreviousData: true,
   });
 
   if (isLoading) return <LoadingSpinner />;
@@ -47,11 +49,14 @@ const AllLoans = () => {
   const { loans = [], total = 0 } = data || {};
   const totalPages = Math.ceil(total / limit);
 
-  // Sliding page numbers helper
   const getPageNumbers = () => {
     const delta = 2;
     const range = [];
-    for (let i = Math.max(1, page - delta); i <= Math.min(totalPages, page + delta); i++) {
+    for (
+      let i = Math.max(1, page - delta);
+      i <= Math.min(totalPages, page + delta);
+      i++
+    ) {
       range.push(i);
     }
     if (range[0] > 2) {
@@ -61,7 +66,8 @@ const AllLoans = () => {
     if (range[range.length - 1] < totalPages - 1) {
       range.push("...");
       range.push(totalPages);
-    } else if (range[range.length - 1] === totalPages - 1) range.push(totalPages);
+    } else if (range[range.length - 1] === totalPages - 1)
+      range.push(totalPages);
     return range;
   };
 
@@ -70,8 +76,10 @@ const AllLoans = () => {
   return (
     <div>
       <Navbar />
-      <div className="container mx-auto px-6 py-16">
-        <h1 className="text-3xl font-bold text-center mb-10 py-24">Available Loans</h1>
+      <div className="container mx-auto px-6 py-10">
+        <h1 className="text-7xl font-bold text-center py-18">
+          Available Loans
+        </h1>
 
         {/* Search & Filter */}
         <div className="flex gap-4 justify-center mb-8 flex-wrap">
@@ -100,8 +108,8 @@ const AllLoans = () => {
 
         {/* Loan Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {loans.map((loan, index) => (
-            <LoanCard key={index} loan={loan} />
+          {loans.map((loan) => (
+            <LoanCard key={loan._id} loan={loan} />
           ))}
         </div>
 
@@ -117,7 +125,9 @@ const AllLoans = () => {
 
           {pageNumbers.map((num, idx) =>
             num === "..." ? (
-              <span key={idx} className="px-2">...</span>
+              <span key={idx} className="px-2">
+                ...
+              </span>
             ) : (
               <button
                 key={idx}

@@ -9,7 +9,7 @@ const AvailableLoans = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosPublic.get("/loans/available").then((res) => {
+    axiosPublic.get("/loans/home").then((res) => {
       setLoans(res.data);
       setLoading(false);
     });
