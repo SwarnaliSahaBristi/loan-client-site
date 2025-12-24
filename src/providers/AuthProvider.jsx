@@ -11,15 +11,9 @@ import {
 } from 'firebase/auth'
 import { app } from '../firebase/firebase.config'
 import { AuthContext } from './AuthContext'
-import axios from 'axios'
 
 const auth = getAuth(app)
 const googleProvider = new GoogleAuthProvider()
-
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
-});
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -35,30 +29,10 @@ const AuthProvider = ({ children }) => {
     return signInWithEmailAndPassword(auth, email, password)
   }
 
-  const signInWithGoogle = async () => {
-  setLoading(true);
-  try {
-    const result = await signInWithPopup(auth, googleProvider);
-    
-    // Call backend to set the JWT cookie
-    await axiosInstance.post("/login-google", { 
-      email: result.user.email,
-      name: result.user.displayName,
-      image: result.user.photoURL
-    });
-
-    // Now that the cookie is set, fetch the role
-    const res = await axiosInstance.get("/users/role");
-    setUser(res.data);
-    
-    return result;
-  } catch (err) {
-    console.error(err);
-    throw err;
-  } finally {
-    setLoading(false);
+  const signInWithGoogle = () => {
+    setLoading(true)
+    return signInWithPopup(auth, googleProvider)
   }
-};
 
   const logOut = async () => {
     setLoading(true)

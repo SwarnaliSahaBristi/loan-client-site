@@ -8,7 +8,11 @@ import { imageUpload, saveOrUpdataUser } from "../../utils";
 
 const SignUp = () => {
   useTitle("Sign Up");
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { createUser, updateUserProfile, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,15 +37,33 @@ const SignUp = () => {
       <div className="w-full max-w-md p-6 rounded-lg bg-base-100 shadow">
         <h1 className="text-4xl font-bold text-center mb-6">Sign Up</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
-          <input {...register("name", { required: "Name is required" })} placeholder="Full Name" className="input input-bordered w-full" />
-          {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
+          <input
+            {...register("name", { required: "Name is required" })}
+            placeholder="Full Name"
+            className="input input-bordered w-full"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs">{errors.name.message}</p>
+          )}
 
-          <input type="file" accept="image/*" {...register("image", { required: "Image is required" })} className="file-input file-input-bordered w-full" />
-          
-          <input type="email" {...register("email", { required: "Email is required" })} placeholder="Email" className="input input-bordered w-full" />
+          <input
+            type="file"
+            accept="image/*"
+            {...register("image", { required: "Image is required" })}
+            className="file-input file-input-bordered w-full"
+          />
 
-          <select {...register("role", { required: true })} className="select select-bordered w-full">
+          <input
+            type="email"
+            {...register("email", { required: "Email is required" })}
+            placeholder="Email"
+            className="input input-bordered w-full"
+          />
+
+          <select
+            {...register("role", { required: true })}
+            className="select select-bordered w-full"
+          >
             <option value="borrower">Borrower</option>
             <option value="manager">Manager</option>
           </select>
@@ -49,26 +71,44 @@ const SignUp = () => {
           {/* Optimized Password Validation */}
           <input
             type="password"
-            {...register("password", { 
+            {...register("password", {
               required: "Password is required",
-              minLength: { value: 6, message: "Minimum 6 characters required" },
-              pattern: {
-                value: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
-                message: "Must include uppercase and lowercase letters"
-              }
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
+              validate: {
+                hasUppercase: (value) =>
+                  /[A-Z]/.test(value) ||
+                  "Must include at least one uppercase letter",
+                hasLowercase: (value) =>
+                  /[a-z]/.test(value) ||
+                  "Must include at least one lowercase letter",
+              },
             })}
             placeholder="Password"
             className="input input-bordered w-full"
           />
-          {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
 
           <button type="submit" className="btn btn-gradient w-full">
-            {loading ? <TbFidgetSpinner className="animate-spin mx-auto" /> : "Sign Up"}
+            {loading ? (
+              <TbFidgetSpinner className="animate-spin mx-auto" />
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </form>
 
         <p className="text-center mt-4 text-sm">
-          Already have an account? <Link to="/login" className="text-pink-400">Login</Link>
+          Already have an account?{" "}
+          <Link to="/login" className="text-pink-400">
+            Login
+          </Link>
         </p>
       </div>
     </div>
