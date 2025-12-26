@@ -37,29 +37,29 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/about-us',
-        element: <AboutUs />
+        path: "/about-us",
+        element: <AboutUs />,
       },
       {
-        path: '/contact',
-        element: <Contact></Contact>
+        path: "/contact",
+        element: <Contact></Contact>,
+      },
+      {
+        path: "/loan-form/:loanId",
+        element: <LoanForm></LoanForm>,
+      },
+      {
+        path: "/all-loans",
+        element: <AllLoans></AllLoans>,
+      },
+      {
+        path: "/loan/:loanId",
+        element: <ViewDetails></ViewDetails>,
       },
     ],
   },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
-  {
-    path: "/loan-form/:loanId",
-    element: <LoanForm></LoanForm>,
-  },
-  {
-    path: "/all-loans",
-    element: <AllLoans></AllLoans>,
-  },
-  {
-    path: "/loans/:loanId",
-    element: <ViewDetails></ViewDetails>,
-  },
   {
     path: "/dashboard",
     element: (
@@ -145,28 +145,34 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'user-management',
-        element: <PrivateRoute>
-          <AdminRoute>
-            <UserManagement />
-          </AdminRoute>
-        </PrivateRoute>
+        path: "user-management",
+        element: (
+          <PrivateRoute>
+            <AdminRoute>
+              <UserManagement />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path: 'pending-loans',
-        element: <PrivateRoute>
-          <ManagerRoute>
-            <PendingLoans/>
-          </ManagerRoute>
-        </PrivateRoute>
+        path: "pending-loans",
+        element: (
+          <PrivateRoute>
+            <ManagerRoute>
+              <PendingLoans />
+            </ManagerRoute>
+          </PrivateRoute>
+        ),
       },
       {
-        path: 'approved-loans',
-        element: <PrivateRoute>
-          <ManagerRoute>
-            <ApprovedLoans/>
-          </ManagerRoute>
-        </PrivateRoute>
+        path: "approved-loans",
+        element: (
+          <PrivateRoute>
+            <ManagerRoute>
+              <ApprovedLoans />
+            </ManagerRoute>
+          </PrivateRoute>
+        ),
       },
       {
         path: "payment-success",

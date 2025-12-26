@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { Link, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -20,7 +21,7 @@ const ViewDetails = () => {
   } = useQuery({
     queryKey: ["loan", loanId],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/loans/${loanId}`);
+      const res = await axiosSecure.get(`/loan/${loanId}`);
       return res.data;
     },
   });
@@ -30,6 +31,17 @@ const ViewDetails = () => {
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 py-10 px-4 md:px-8">
+      <div className="mt-10">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-3xl md:text-5xl font-extrabold text-center"
+        >
+          {loan.loanTitle}
+        </motion.h1>
+        <p className="text-gray-500 mt-2 text-center py-3 hover:text-base-content"><Link to='/' className="hover: underline">Home /</Link>
+        <Link to='/all-loans' className="hover: underline ">All Loans /</Link>  {loan.category}</p>
+      </div>
       <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row gap-6 md:gap-10 p-6 md:p-10 transition-colors duration-300">
         {/* Loan Image */}
         <div className="md:w-1/2 flex justify-center items-center">

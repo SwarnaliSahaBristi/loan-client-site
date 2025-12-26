@@ -45,9 +45,9 @@ const LoanCard = ({ loan }) => {
 
         <div className="card-actions mt-4">
           <Link
-            to={`/loans/${_id}`}
+            to={`/loan/${_id}`}
             className="btn btn-gradient w-full"
-          >
+            >
             View Details
           </Link>
         </div>
