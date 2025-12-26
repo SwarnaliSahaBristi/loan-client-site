@@ -75,7 +75,6 @@ const AllLoans = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="container mx-auto px-6 py-10">
         <h1 className="text-7xl font-bold text-center py-18">
           Available Loans
@@ -148,7 +147,6 @@ const AllLoans = () => {
           </button>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

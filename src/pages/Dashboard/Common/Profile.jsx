@@ -24,7 +24,7 @@ const Profile = () => {
         });
     };
   return (
-    <div className='flex justify-center items-center h-screen bg-pink-100'>
+    <div className='flex justify-center items-center h-screen'>
       <div className='bg-base-100 shadow-lg rounded-2xl md:w-4/5 lg:w-3/5'>
         <div className='flex flex-col items-center justify-center p-4 -mt-16'>
           <a href='#' className='relative block'>

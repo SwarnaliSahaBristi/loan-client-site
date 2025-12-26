@@ -5,8 +5,10 @@ import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 import toast from "react-hot-toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useTitle from "../../components/Usetitle/useTitle";
 
 const LoanForm = () => {
+  useTitle('Loan Application Form')
   const { loanId } = useParams();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
@@ -20,7 +22,7 @@ const LoanForm = () => {
   } = useQuery({
     queryKey: ["loan", loanId],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/loans/${loanId}`);
+      const res = await axiosSecure.get(`/loan/${loanId}`);
       return res.data;
     },
   });
@@ -64,7 +66,7 @@ const LoanForm = () => {
 
   return (
     <div className="card bg-base-100 max-w-lg mx-auto shadow-xl rounded-2xl mt-10 p-6">
-      <h2 className="text-2xl font-bold text-center mb-6">
+      <h2 className="text-7xl font-bold text-center mb-6">
         Loan Application Form
       </h2>
 

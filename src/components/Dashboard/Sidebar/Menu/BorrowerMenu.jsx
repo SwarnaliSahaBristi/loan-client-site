@@ -1,6 +1,5 @@
 import React from 'react';
 import { GiReceiveMoney } from "react-icons/gi";
-import { GrUserAdmin } from 'react-icons/gr'
 import MenuItem from './MenuItem'
 
 const BorrowerMenu = () => {
