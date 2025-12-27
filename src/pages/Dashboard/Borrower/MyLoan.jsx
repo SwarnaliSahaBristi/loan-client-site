@@ -1,16 +1,46 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 import useTitle from "../../../components/Usetitle/useTitle";
+import { useLocation, useNavigate } from "react-router";
 
 const MyLoan = () => {
   useTitle('My Loan');
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [isPaying, setIsPaying] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const sessionId = queryParams.get("session_id");
+    const loanId = queryParams.get("loanId");
+
+    if (sessionId && loanId) {
+      verifyPayment(sessionId, loanId);
+    }
+  }, [location]);
+
+  const verifyPayment = async (sessionId, loanId) => {
+    try {
+      await axiosSecure.post(`/loan-applications/verify-payment`, {
+        loanId,
+        sessionId,
+        email: user.email,
+      });
+      Swal.fire("Success", "Payment Verified!", "success");
+      refetch();
+      // Remove the query strings from URL
+      navigate("/dashboard/my-loans", { replace: true });
+    } catch (err) {
+      Swal.fire("Error", "Payment verification failed", "error");
+    }
+  };
 
   const { data: loans = [], isLoading, refetch } = useQuery({
     queryKey: ["myLoans", user?.email],
@@ -25,47 +55,23 @@ const MyLoan = () => {
 
   // Open Stripe Checkout in popup
   const handlePay = async (loan) => {
-    setIsPaying(true);
-    try {
-      const { data } = await axiosSecure.post("/create-checkout-session", {
-        loanId: loan._id,
-        email: user.email,
-      });
+  setIsPaying(true);
+  try {
+    const { data } = await axiosSecure.post("/create-checkout-session", {
+      loanId: loan._id,
+      email: user.email,
+      loanName: loan.loanTitle,
+      loanImage: loan.loanImage || "https://your-fallback-image.com/logo.png",
+    });
+    window.location.href = data.url; 
 
-      // Open checkout in popup
-      const stripeWindow = window.open(
-        data.url,
-        "Stripe Payment",
-        "width=500,height=700"
-      );
-
-      const checkPaymentInterval = setInterval(async () => {
-        if (stripeWindow.closed) {
-          clearInterval(checkPaymentInterval);
-
-          // Verify payment
-          try {
-            await axiosSecure.post(`/loan-applications/verify-payment`, {
-              loanId: loan._id,
-              sessionId: new URL(data.url).searchParams.get("session_id"),
-              email: user.email,
-            });
-
-            Swal.fire("Payment Successful!", "", "success");
-            refetch();
-          } catch (err) {
-            console.error(err);
-            Swal.fire("Payment verification failed", "", "error");
-          }
-        }
-      }, 1000);
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Unable to start payment", "error");
-    } finally {
-      setIsPaying(false);
-    }
-  };
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Unable to start payment", "error");
+  } finally {
+    setIsPaying(false);
+  }
+};
 
   return (
     <div className="p-6">
