@@ -2,25 +2,26 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import LoadingSpinner from "../Shared/LoadingSpinner";
 import { TbFidgetSpinner } from "react-icons/tb";
 import useTitle from "../Usetitle/useTitle";
 import { imageUpload } from "../../utils";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddLoanForm = () => {
   useTitle("Add Loan");
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const [emiPlans, setEmiPlans] = useState([""]);
 
   const { register, handleSubmit, reset } = useForm();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: async (payload) =>
-      await axios.post(`${import.meta.env.VITE_API_URL}/loans`, payload, {
-        headers: { Authorization: `Bearer ${user?.accessToken}` },
-      }),
+    mutationFn: async (payload) => {
+      const res = await axiosSecure.post("/loans", payload);
+      return res.data;
+    },
     onSuccess: () => {
       toast.success("Loan added successfully!");
       reset();
@@ -43,30 +44,28 @@ const AddLoanForm = () => {
     try {
       let imageUrl = "";
       if (data.image?.[0]) {
-        // Upload image to imgbb
         imageUrl = await imageUpload(data.image[0]);
       }
-
       const payload = {
         loanImage: imageUrl,
         loanTitle: data.title,
         description: data.description,
         category: data.category,
-        interestRate: data.interestRate,
+        interestRate: parseFloat(data.interestRate),
         maxLimit: data.maxLoanLimit,
-        emiPlans: emiPlans.filter((p) => p),
-        showOnHome: data.showOnHome || false,
+        emiPlans: emiPlans.filter((p) => p.trim() !== ""),
         requiredDocuments: data.requiredDocuments
           .split(",")
-          .map((doc) => doc.trim()), // convert to array
+          .map((doc) => doc.trim())
+          .filter((doc) => doc !== ""),
+        showOnHome: data.showOnHome || false,
+        createdBy: user?.email,
+        createdAt: new Date().toISOString(),
       };
-
       await mutateAsync(payload);
-      reset();
-      setEmiPlans([""]);
     } catch (err) {
-      toast.error("Failed to upload image or save loan");
-      console.log(err);
+      toast.error("Failed to add loan. Please check your connection.");
+      console.error(err);
     }
   };
 
