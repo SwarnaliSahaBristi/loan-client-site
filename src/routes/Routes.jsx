@@ -47,15 +47,21 @@ export const router = createBrowserRouter([
       },
       {
         path: "/loan-form/:loanId",
-        element: <LoanForm></LoanForm>,
+        element: <PrivateRoute>
+          <LoanForm></LoanForm>
+        </PrivateRoute>,
       },
       {
         path: "/all-loans",
-        element: <AllLoans></AllLoans>,
+        element: <PrivateRoute>
+          <AllLoans></AllLoans>
+        </PrivateRoute>,
       },
       {
         path: "/loan/:loanId",
-        element: <ViewDetails></ViewDetails>,
+        element: <PrivateRoute>
+          <ViewDetails></ViewDetails>
+        </PrivateRoute>,
       },
     ],
   },
