@@ -5,11 +5,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, Legend 
 } from "recharts";
-import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AdminHome = () => {
-  const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
   const { data: loans = [], isLoading } = useQuery({
