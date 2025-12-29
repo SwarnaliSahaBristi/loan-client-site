@@ -25,44 +25,54 @@ const ManageUsers = () => {
     queryKey: ["users", page, search, roleFilter, statusFilter],
     queryFn: async () => {
       const res = await axiosSecure.get("/admin/users", {
-        params: { search, role: roleFilter, status: statusFilter, page, limit }
+        params: { search, role: roleFilter, status: statusFilter, page, limit },
       });
       return res.data;
-    }
+    },
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: async ({ id, role }) => 
+    mutationFn: async ({ id, role }) =>
       await axiosSecure.patch(`/admin/users/${id}/role`, { role }),
     onSuccess: () => {
       toast.success("Role updated successfully");
       queryClient.invalidateQueries(["users"]);
     },
-    onError: () => toast.error("Failed to update role")
+    onError: () => toast.error("Failed to update role"),
   });
 
   const approveMutation = useMutation({
-    mutationFn: async (id) => 
+    mutationFn: async (id) =>
       await axiosSecure.patch(`/admin/users/${id}/approve`),
     onSuccess: () => {
       toast.success("User approved successfully");
       queryClient.invalidateQueries(["users"]);
     },
-    onError: () => toast.error("Failed to approve user")
+    onError: () => toast.error("Failed to approve user"),
   });
 
   const suspendMutation = useMutation({
-    mutationFn: async ({ id, reason, feedback }) =>
-      await axiosSecure.patch(`/admin/users/${id}/suspend`, { reason, feedback }),
+    mutationFn: async ({ id, reason, feedback }) => {
+      if (!id) throw new Error("User ID is missing");
+
+      const { data } = await axiosSecure.patch(`/admin/users/${id}/suspend`, {
+        reason,
+        feedback,
+      });
+      return data;
+    },
     onSuccess: () => {
       toast.success("User suspended successfully");
-      queryClient.invalidateQueries(["users"]);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       setShowSuspendModal(false);
       setSuspendReason("");
       setSuspendFeedback("");
       setSelectedUser(null);
     },
-    onError: () => toast.error("Failed to suspend user")
+    onError: (error) => {
+      const msg = error.response?.data?.message || "Failed to suspend user";
+      toast.error(msg);
+    },
   });
 
   const handleSuspend = (user) => {
@@ -78,7 +88,7 @@ const ManageUsers = () => {
     suspendMutation.mutate({
       id: selectedUser._id,
       reason: suspendReason,
-      feedback: suspendFeedback
+      feedback: suspendFeedback,
     });
   };
 
@@ -163,7 +173,7 @@ const ManageUsers = () => {
                     onChange={(e) =>
                       updateRoleMutation.mutate({
                         id: user._id,
-                        role: e.target.value
+                        role: e.target.value,
                       })
                     }
                   >
@@ -251,7 +261,7 @@ const ManageUsers = () => {
 
             <div className="form-control mb-4">
               <label className="label">
-                <span className="label-text">Feedback (Optional)</span>
+                <span className="label-text">Feedback</span>
               </label>
               <textarea
                 placeholder="Additional details about the suspension..."
