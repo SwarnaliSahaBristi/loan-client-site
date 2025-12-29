@@ -14,7 +14,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
       try {
-        const res = await axiosSecure.get("/admin/users", {
+        const res = await axiosSecure.get("/admin/users-management", {
           params: { search, role, status },
         });
         if (isMounted) setUsers(res.data);
