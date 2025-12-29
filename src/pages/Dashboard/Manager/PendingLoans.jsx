@@ -161,7 +161,7 @@ const PendingLoans = () => {
               <div className="col-span-2"><strong>Address:</strong> {selectedLoan.address}</div>
             </div>
             <div className="modal-action">
-              <button onClick={closeModals} className="btn">Close</button>
+              <button onClick={closeModals} className="btn btn-gradient">Close</button>
             </div>
           </div>
         </div>

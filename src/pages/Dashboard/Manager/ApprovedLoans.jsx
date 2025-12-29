@@ -110,7 +110,7 @@ const ApprovedLoans = () => {
             <div className="modal-action">
               <button 
                 onClick={() => setSelectedLoan(null)} 
-                className="btn btn-primary"
+                className="btn btn-gradient"
               >
                 Close
               </button>

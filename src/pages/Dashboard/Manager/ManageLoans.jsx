@@ -18,7 +18,6 @@ const ManageLoans = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
 
-  // React Hook Form for the Modal
   const { register, handleSubmit, reset } = useForm();
 
   const { data: loans = [], isLoading } = useQuery({
@@ -135,13 +134,13 @@ const ManageLoans = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => openUpdateModal(loan)}
-                      className="btn btn-sm btn-info"
+                      className="btn btn-gradient"
                     >
                       Update
                     </button>
                     <button
                       onClick={() => handleDelete(loan._id)}
-                      className="btn btn-sm btn-error"
+                      className="btn btn-outline"
                     >
                       Delete
                     </button>
