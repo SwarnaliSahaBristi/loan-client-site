@@ -13,7 +13,7 @@ const LoanApplications = () => {
   const axiosSecure = useAxiosSecure();
 
   const fetchLoanApplications = async () => {
-    const { data } = await axiosSecure.get("/loan-applications", {
+    const { data } = await axiosSecure.get("/admin/loan-applications", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
@@ -33,7 +33,7 @@ const LoanApplications = () => {
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status, reason }) =>
       axiosSecure.patch(
-        `/loan-applications/${id}/status`,
+        `/admin/loan-applications/${id}/status`,
         { status, reason },
         {
           headers: {
@@ -76,12 +76,12 @@ const LoanApplications = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="border px-2 py-1 rounded"
         >
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-          <option value="suspended">Suspended</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="all" className="bg-base-100 text-base-content">All</option>
+          <option value="pending" className="bg-base-100 text-base-content">Pending</option>
+          <option value="approved" className="bg-base-100 text-base-content">Approved</option>
+          <option value="rejected" className="bg-base-100 text-base-content">Rejected</option>
+          <option value="suspended" className="bg-base-100 text-base-content">Suspended</option>
+          <option value="cancelled" className="bg-base-100 text-base-content">Cancelled</option>
         </select>
       </div>
 
@@ -103,7 +103,7 @@ const LoanApplications = () => {
               <td className="border px-4 py-2">{loan._id}</td>
               <td className="border px-4 py-2">
                 {loan.userName} <br />
-                <span className="text-sm text-gray-500">{loan.userEmail}</span>
+                <span className="text-sm text-base-content">{loan.userEmail}</span>
               </td>
               <td className="border px-4 py-2">{loan.loanTitle}</td>
               <td className="border px-4 py-2">${loan.loanAmount}</td>
@@ -111,7 +111,7 @@ const LoanApplications = () => {
               <td className="border px-4 py-2">
                 <button
                   onClick={() => setSelectedLoan(loan)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  className="btn btn-gradient"
                 >
                   View
                 </button>
@@ -124,7 +124,7 @@ const LoanApplications = () => {
       {/* Modal */}
       {selectedLoan && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto">
+          <div className="bg-base-100 rounded shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">
               Loan Application Details
             </h3>

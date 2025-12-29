@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useTitle from "../../../components/Usetitle/useTitle";
 
 const UserManagement = () => {
+  useTitle('User Management')
   const axiosSecure = useAxiosSecure();
-
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
