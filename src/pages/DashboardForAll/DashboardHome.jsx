@@ -1,8 +1,7 @@
-// import ManagerHome from "./ManagerHome";
-// import BorrowerHome from "./BorrowerHome";
 import useRole from "../../hooks/useRole";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 import AdminHome from "./AdminHome";
+import BorrowerHome from "./BorrowHome";
 
 const DashboardHome = () => {
   const {role, isLoading} = useRole();
@@ -12,7 +11,7 @@ const DashboardHome = () => {
   if (role === 'admin') return <AdminHome />;
 //   if (role === 'manager') return <ManagerHome />;
   
-//   return <BorrowerHome />;
+  return <BorrowerHome />;
 };
 
 export default DashboardHome;
