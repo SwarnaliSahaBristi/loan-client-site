@@ -1,4 +1,4 @@
-import { FaUserCog } from "react-icons/fa";
+import { FaHourglassHalf, FaUserCog } from "react-icons/fa";
 import { RiMoneyDollarBoxFill } from "react-icons/ri";
 import { AiFillMoneyCollect } from "react-icons/ai";
 
@@ -15,7 +15,7 @@ const AdminMenu = () => {
         address="all-loans"
       />
       <MenuItem icon={FaUserCog} label="Manage Users" address="manage-users" />
-      <MenuItem icon={FaUserCog} label="User Management" address="user-management" />
+      <MenuItem icon={FaHourglassHalf} label="User Management" address="user-management" />
       <MenuItem icon={AiFillMoneyCollect} label="Loan Applications" address="loan-applications" />
     </>
   );

@@ -25,6 +25,7 @@ import PendingLoans from "../pages/Dashboard/Manager/PendingLoans";
 import AboutUs from "../pages/Dashboard/Common/AboutUs";
 import Contact from "../pages/Dashboard/Common/Contact";
 import UserManagement from "../pages/Dashboard/Admin/UserManagement";
+import DashboardHome from "../pages/DashboardForAll/DashboardHome";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      {
+        index: true,
+        element: <DashboardHome />,
+      },
       {
         path: "add-loan",
         element: (

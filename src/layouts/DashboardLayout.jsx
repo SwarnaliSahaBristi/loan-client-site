@@ -24,7 +24,7 @@ const DashboardLayout = () => {
             isSidebarOpen ? "md:ml-64" : "md:ml-0"
           }`}
         >
-          <div className="p-5 min-h-screen">
+          <div className="p-5 min-h-screen mt-6">
             <Outlet />
           </div>
           <footer className="footer footer-center p-4 bg-base-200 text-base-content border-t">
