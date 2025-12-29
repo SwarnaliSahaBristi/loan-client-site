@@ -17,7 +17,7 @@ const AdminAllLoans = () => {
   } = useQuery({
     queryKey: ["loans"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/loans");
+      const res = await axiosSecure.get("/admin/loans");
       return res.data;
     },
   });
