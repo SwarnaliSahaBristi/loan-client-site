@@ -23,7 +23,7 @@ const EditLoan = () => {
   useEffect(() => {
     const fetchLoan = async () => {
       try {
-        const res = await axiosSecure.get(`/loans/${id}`);
+        const res = await axiosSecure.get(`/admin/loans/${id}`);
         const loan = res.data;
 
         reset({
@@ -80,7 +80,7 @@ const EditLoan = () => {
         loanImage: finalImageUrl,
       };
 
-      await axiosSecure.put(`/loans/${id}`, payload);
+      await axiosSecure.put(`/admin/loans/${id}`, payload);
       toast.success("Loan updated successfully");
       navigate("/dashboard/all-loans");
     } catch (err) {
@@ -94,7 +94,7 @@ const EditLoan = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50 p-6">
+    <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-base-content rounded-xl bg-base-100 p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl">
         <h2 className="text-2xl font-bold mb-6">Edit Loan</h2>
 

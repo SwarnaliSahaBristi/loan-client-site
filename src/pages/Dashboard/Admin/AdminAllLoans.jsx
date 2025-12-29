@@ -1,10 +1,10 @@
-// import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "react-router";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 import useTitle from "../../../components/Usetitle/useTitle";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const AdminAllLoans = () => {
   useTitle("All Loans");
@@ -22,94 +22,106 @@ const AdminAllLoans = () => {
     },
   });
 
-  // Delete loan mutation
   const deleteMutation = useMutation({
-    mutationFn: async (id) => await axiosSecure.delete(`/loans/${id}`),
+    mutationFn: async (id) => await axiosSecure.delete(`/admin/loans/${id}`),
     onSuccess: () => {
-      toast.success("Loan deleted successfully");
+      Swal.fire("Deleted!", "The loan has been removed.", "success");
       refetch();
     },
     onError: (err) => toast.error(err.message),
   });
 
-  // Toggle show on home
   const toggleMutation = useMutation({
     mutationFn: async ({ id, showOnHome }) =>
-      await axiosSecure.patch(`/loans/${id}/show-on-home`, { showOnHome }),
+      await axiosSecure.patch(`/admin/loans/${id}/show-on-home`, {
+        showOnHome,
+      }),
     onSuccess: () => refetch(),
     onError: (err) => toast.error(err.message),
   });
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation.mutate(id);
+      }
+    });
+  };
 
   if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="container mx-auto px-6 py-10">
       <h1 className="text-3xl font-bold mb-6">All Loans</h1>
-
-      <table className="table-auto w-full border-collapse border border-base-300">
-        <thead>
-          <tr className="bg-base-100">
-            <th className="border px-4 py-2">Image</th>
-            <th className="border px-4 py-2">Title</th>
-            <th className="border px-4 py-2">Interest</th>
-            <th className="border px-4 py-2">Category</th>
-            <th className="border px-4 py-2">Created By</th>
-            <th className="border px-4 py-2">Show on Home</th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loans.map((loan) => (
-            <tr key={loan._id} className="hover:bg-base-50">
-              <td className="border px-4 py-2">
-                <img
-                  src={loan.loanImage}
-                  alt={loan.loanTitle}
-                  className="h-12 w-12 object-cover rounded"
-                />
-              </td>
-              <td className="border px-4 py-2">{loan.loanTitle}</td>
-              <td className="border px-4 py-2">{loan.interestRate}%</td>
-              <td className="border px-4 py-2">{loan.category}</td>
-              <td className="border px-4 py-2">{loan.createdBy}</td>
-              <td className="border px-4 py-2 text-center">
-                <input
-                  type="checkbox"
-                  checked={loan.showOnHome}
-                  onChange={() =>
-                    toggleMutation.mutate({
-                      id: loan._id,
-                      showOnHome: !loan.showOnHome,
-                    })
-                  }
-                />
-              </td>
-              <td className="border px-4 py-2 flex gap-2 justify-center">
-                <Link
-                  to={`/dashboard/edit-loans/${loan._id}`}
-                  className="btn btn-sm btn-outline"
-                >
-                  Update
-                </Link>
-                <button
-                  onClick={() => {
-                    if (
-                      window.confirm(
-                        "Are you sure you want to delete this loan?"
-                      )
-                    ) {
-                      deleteMutation.mutate(loan._id);
-                    }
-                  }}
-                  className="btn btn-sm btn-error"
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="overflow-x-auto shadow-md rounded-lg">
+        <table className="table w-full">
+          <thead>
+            <tr className="bg-base-200">
+              <th>Image</th>
+              <th>Title</th>
+              <th>Interest</th>
+              <th>Category</th>
+              <th>Created By</th>
+              <th>Show on Home</th>
+              <th className="text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {loans.map((loan) => (
+              <tr key={loan._id} className="hover">
+                <td>
+                  <img
+                    src={loan.loanImage}
+                    alt={loan.loanTitle}
+                    className="h-12 w-12 object-cover rounded"
+                  />
+                </td>
+                <td className="font-semibold">{loan.loanTitle}</td>
+                <td>{loan.interestRate}%</td>
+                <td>
+                  <span className="badge badge-ghost">{loan.category}</span>
+                </td>
+                <td className="text-sm">{loan.createdBy}</td>
+                <td className="text-center">
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={loan.showOnHome}
+                    onChange={() =>
+                      toggleMutation.mutate({
+                        id: loan._id,
+                        showOnHome: !loan.showOnHome,
+                      })
+                    }
+                  />
+                </td>
+                <td className="flex gap-2 justify-center">
+                  <Link
+                    to={`/dashboard/edit-loans/${loan._id}`}
+                    className="btn btn-gradient"
+                  >
+                    Update
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(loan._id)}
+                    className="btn outline"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
