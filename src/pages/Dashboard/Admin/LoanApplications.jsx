@@ -3,60 +3,80 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useTitle from "../../../components/Usetitle/useTitle";
+import Swal from "sweetalert2"; // Recommended for professional feedback
 
 const LoanApplications = () => {
-    useTitle('Loan Applications')
+  useTitle("Loan Applications");
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [reasonInput, setReasonInput] = useState("");
   const queryClient = useQueryClient();
   const axiosSecure = useAxiosSecure();
 
-  const fetchLoanApplications = async () => {
-    const { data } = await axiosSecure.get("/admin/loan-applications", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-    });
-    return data;
-  };
-
+  // 1. Fetch Logic
   const {
     data: loans = [],
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["loanApplications"],
-    queryFn: fetchLoanApplications,
-  });
-
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status, reason }) =>
-      axiosSecure.patch(
-        `/admin/loan-applications/${id}/status`,
-        { status, reason },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["loanApplications"]);
-      setSelectedLoan(null);
-      setReasonInput("");
+    queryFn: async () => {
+      const { data } = await axiosSecure.get("/admin/loan-applications");
+      return data;
     },
   });
 
+  // 2. Update Logic (Mutation)
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status, reason }) => {
+      const { data } = await axiosSecure.patch(
+        `/admin/loan-applications/${id}/status`,
+        {
+          status,
+          reason,
+        }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["loanApplications"]);
+      Swal.fire({
+        icon: "success",
+        title: "Updated!",
+        text: "Loan status has been updated successfully.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      setSelectedLoan(null);
+      setReasonInput("");
+    },
+    onError: (error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.response?.data?.message || "Something went wrong!",
+      });
+    },
+  });
+
+  // 3. Filter Logic
   const filteredLoans =
     statusFilter === "all"
       ? loans
       : loans.filter((loan) => loan.status.toLowerCase() === statusFilter);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading loans</div>;
-
   const handleStatusChange = (status) => {
+    if (
+      (status === "rejected" || status === "suspended") &&
+      !reasonInput.trim()
+    ) {
+      return Swal.fire(
+        "Required",
+        "Please provide a reason for this action.",
+        "warning"
+      );
+    }
+
     updateStatusMutation.mutate({
       id: selectedLoan._id,
       status,
@@ -64,174 +84,206 @@ const LoanApplications = () => {
     });
   };
 
-  return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Loan Applications</h2>
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-10">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="text-red-500 text-center p-10">
+        Error loading loans. Please check your connection.
+      </div>
+    );
 
-      {/* Filter */}
-      <div className="mb-4">
-        <label className="mr-2 font-medium">Filter by Status:</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="all" className="bg-base-100 text-base-content">All</option>
-          <option value="pending" className="bg-base-100 text-base-content">Pending</option>
-          <option value="approved" className="bg-base-100 text-base-content">Approved</option>
-          <option value="rejected" className="bg-base-100 text-base-content">Rejected</option>
-          <option value="suspended" className="bg-base-100 text-base-content">Suspended</option>
-          <option value="cancelled" className="bg-base-100 text-base-content">Cancelled</option>
-        </select>
+  return (
+    <div className="p-4 md:p-8 bg-base-200 min-h-screen">
+      <div className="max-w-7xl mx-auto bg-base-100 p-6 rounded-xl shadow-md">
+        <h2 className="text-2xl font-bold mb-6 text-base-content">
+          Loan Applications
+        </h2>
+
+        {/* Filter Section */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
+          <label className="font-medium text-base-content opacity-70">
+            Filter by Status:
+          </label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="select select-bordered select-sm w-full max-w-xs bg-base-100 text-base-content"
+          >
+            <option value="all">All Applications</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="suspended">Suspended</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        {/* Table Section */}
+        <div className="overflow-x-auto rounded-lg border border-base-300">
+          <table className="table table-zebra w-full">
+            <thead className="bg-base-300 text-base-content">
+              <tr>
+                <th>User Details</th>
+                <th>Loan Title</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredLoans.map((loan) => (
+                <tr
+                  key={loan._id}
+                  className="hover:bg-base-200 transition-colors"
+                >
+                  <td>
+                    <div className="font-bold">{loan.userName}</div>
+                    <div className="text-sm opacity-60">{loan.userEmail}</div>
+                  </td>
+                  <td className="font-medium">{loan.loanTitle}</td>
+                  <td className="text-primary font-semibold">
+                    ${loan.loanAmount}
+                  </td>
+                  <td>
+                    <span
+                      className={`badge badge-sm uppercase font-bold ${
+                        loan.status === "approved"
+                          ? "badge-success"
+                          : loan.status === "pending"
+                          ? "badge-warning"
+                          : "badge-error"
+                      }`}
+                    >
+                      {loan.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => setSelectedLoan(loan)}
+                      className="btn btn-sm btn-outline btn-primary"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Table */}
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr className="bg-base-100">
-            <th className="border px-4 py-2">Loan ID</th>
-            <th className="border px-4 py-2">User</th>
-            <th className="border px-4 py-2">Loan Title</th>
-            <th className="border px-4 py-2">Amount</th>
-            <th className="border px-4 py-2">Status</th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredLoans.map((loan) => (
-            <tr key={loan._id}>
-              <td className="border px-4 py-2">{loan._id}</td>
-              <td className="border px-4 py-2">
-                {loan.userName} <br />
-                <span className="text-sm text-base-content">{loan.userEmail}</span>
-              </td>
-              <td className="border px-4 py-2">{loan.loanTitle}</td>
-              <td className="border px-4 py-2">${loan.loanAmount}</td>
-              <td className="border px-4 py-2 capitalize">{loan.status}</td>
-              <td className="border px-4 py-2">
-                <button
-                  onClick={() => setSelectedLoan(loan)}
-                  className="btn btn-gradient"
-                >
-                  View
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal */}
+      {/* Modal Section */}
       {selectedLoan && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-base-100 rounded shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-4">
-              Loan Application Details
+        <div className="modal modal-open bg-black/60">
+          <div className="modal-box bg-base-100 text-base-content max-w-2xl border border-base-300">
+            <h3 className="text-xl font-bold border-b pb-3 mb-4">
+              Application Details
             </h3>
-            <div className="space-y-2">
-              <p>
-                <strong>Name:</strong> {selectedLoan.userName}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedLoan.userEmail}
-              </p>
-              <p>
-                <strong>Loan Title:</strong> {selectedLoan.loanTitle}
-              </p>
-              <p>
-                <strong>Amount:</strong> ${selectedLoan.loanAmount}
-              </p>
-              <p>
-                <strong>Status:</strong> {selectedLoan.status}
-              </p>
-              <p>
-                <strong>Applied At:</strong>{" "}
-                {format(new Date(selectedLoan.appliedAt), "PPPpp")}
-              </p>
-              <p>
-                <strong>Contact Number:</strong> {selectedLoan.contactNumber}
-              </p>
-              <p>
-                <strong>National ID:</strong> {selectedLoan.nationalId}
-              </p>
-              <p>
-                <strong>Income Source:</strong> {selectedLoan.incomeSource}
-              </p>
-              <p>
-                <strong>Monthly Income:</strong> ${selectedLoan.monthlyIncome}
-              </p>
-              <p>
-                <strong>Reason:</strong> {selectedLoan.reason}
-              </p>
-              <p>
-                <strong>Address:</strong> {selectedLoan.address}
-              </p>
-              <p>
-                <strong>Notes:</strong> {selectedLoan.notes || "N/A"}
-              </p>
-              {selectedLoan.paymentInfo && (
-                <>
-                  <p>
-                    <strong>Payment Status:</strong>{" "}
-                    {selectedLoan.applicationFeeStatus}
-                  </p>
-                  <p>
-                    <strong>Transaction ID:</strong>{" "}
-                    {selectedLoan.paymentInfo?.transactionId || "N/A"}
-                  </p>
-                </>
-              )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="opacity-60">Applicant Name</p>
+                <p className="font-semibold">{selectedLoan.userName}</p>
+              </div>
+              <div>
+                <p className="opacity-60">Application ID</p>
+                <p className="font-mono text-xs">{selectedLoan._id}</p>
+              </div>
+              <div>
+                <p className="opacity-60">Loan Type</p>
+                <p className="font-semibold">{selectedLoan.loanTitle}</p>
+              </div>
+              <div>
+                <p className="opacity-60">Requested Amount</p>
+                <p className="text-lg font-bold text-primary">
+                  ${selectedLoan.loanAmount}
+                </p>
+              </div>
+              <div>
+                <p className="opacity-60">Phone</p>
+                <p>{selectedLoan.contactNumber}</p>
+              </div>
+              <div>
+                <p className="opacity-60">Income</p>
+                <p>
+                  ${selectedLoan.monthlyIncome}/mo ({selectedLoan.incomeSource})
+                </p>
+              </div>
+              <div className="col-span-2">
+                <p className="opacity-60">Address</p>
+                <p>{selectedLoan.address}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="opacity-60">Applied Date</p>
+                <p>{format(new Date(selectedLoan.appliedAt), "PPPpp")}</p>
+              </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="mt-4 space-y-2">
-              {selectedLoan.status === "pending" && (
-                <>
+            {/* Admin Action Area */}
+            <div className="mt-8 pt-6 border-t">
+              {selectedLoan.status === "pending" ? (
+                <div className="space-y-4">
                   <div>
-                    <label className="block font-medium mb-1">
-                      Reason (if Reject/Suspend)
+                    <label className="label text-sm font-bold">
+                      Admin Remarks / Reason
                     </label>
-                    <input
-                      type="text"
+                    <textarea
                       value={reasonInput}
                       onChange={(e) => setReasonInput(e.target.value)}
-                      className="border px-2 py-1 w-full rounded"
-                      placeholder="Optional reason"
+                      className="textarea textarea-bordered w-full h-20 bg-base-200"
+                      placeholder="Enter reason for approval or rejection..."
                     />
                   </div>
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
+                      disabled={updateStatusMutation.isPending}
                       onClick={() => handleStatusChange("approved")}
-                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                      className="btn btn-success flex-1"
                     >
                       Approve
                     </button>
                     <button
+                      disabled={updateStatusMutation.isPending}
                       onClick={() => handleStatusChange("rejected")}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      className="btn btn-error flex-1"
                     >
                       Reject
                     </button>
                     <button
+                      disabled={updateStatusMutation.isPending}
                       onClick={() => handleStatusChange("suspended")}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                      className="btn btn-warning flex-1"
                     >
                       Suspend
                     </button>
                   </div>
-                </>
+                </div>
+              ) : (
+                <div className="btn btn-gradient">
+                  <span>
+                    This application is already{" "}
+                    <strong>{selectedLoan.status}</strong>.
+                  </span>
+                </div>
               )}
             </div>
 
-            <button
-              onClick={() => {
-                setSelectedLoan(null);
-                setReasonInput("");
-              }}
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              Close
-            </button>
+            <div className="modal-action">
+              <button
+                onClick={() => {
+                  setSelectedLoan(null);
+                  setReasonInput("");
+                }}
+                className="btn btn-ghost"
+              >
+                Close Window
+              </button>
+            </div>
           </div>
         </div>
       )}
