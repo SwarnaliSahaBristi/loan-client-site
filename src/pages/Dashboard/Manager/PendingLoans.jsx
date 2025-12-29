@@ -1,4 +1,3 @@
-// PendingLoans.jsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -11,17 +10,24 @@ const PendingLoans = () => {
   useTitle("Pending Loans");
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
+  
+  // State Management
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
 
+  // Fetch Data
   const { data: loans = [], isLoading } = useQuery({
     queryKey: ["pendingLoans"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/manager/loan-applications?status=pending");
+      const res = await axiosSecure.get(
+        "/manager/loan-applications?status=pending"
+      );
       return res.data;
-    }
+    },
   });
 
+  // Approve Mutation
   const approveMutation = useMutation({
     mutationFn: async (id) =>
       await axiosSecure.patch(`/loan-applications/manager/${id}/approve`),
@@ -30,27 +36,47 @@ const PendingLoans = () => {
       queryClient.invalidateQueries(["pendingLoans"]);
       queryClient.invalidateQueries(["approvedLoans"]);
     },
-    onError: () => toast.error("Failed to approve loan")
+    onError: () => toast.error("Failed to approve loan"),
   });
 
+  // Reject Mutation
   const rejectMutation = useMutation({
     mutationFn: async ({ id, reason }) =>
-      await axiosSecure.patch(`/loan-applications/manager/${id}/reject`, { reason }),
+      await axiosSecure.patch(`/loan-applications/manager/${id}/reject`, {
+        reason,
+      }),
     onSuccess: () => {
       toast.success("Loan rejected");
       queryClient.invalidateQueries(["pendingLoans"]);
-      setSelectedLoan(null);
-      setRejectReason("");
+      closeModals();
     },
-    onError: () => toast.error("Failed to reject loan")
+    onError: () => toast.error("Failed to reject loan"),
   });
 
-  const handleReject = () => {
+  // Handlers
+  const handleView = (loan) => {
+    setSelectedLoan(loan);
+    setIsRejecting(false); // Mode: View
+  };
+
+  const handleRejectClick = (loan) => {
+    setSelectedLoan(loan);
+    setIsRejecting(true); // Mode: Reject
+    setRejectReason("");
+  };
+
+  const handleRejectSubmit = () => {
     if (!rejectReason.trim()) {
       toast.error("Please provide a reason");
       return;
     }
     rejectMutation.mutate({ id: selectedLoan._id, reason: rejectReason });
+  };
+
+  const closeModals = () => {
+    setSelectedLoan(null);
+    setIsRejecting(false);
+    setRejectReason("");
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -90,22 +116,20 @@ const PendingLoans = () => {
                   <td>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setSelectedLoan(loan)}
+                        onClick={() => handleView(loan)}
                         className="btn btn-sm btn-info"
                       >
                         View
                       </button>
                       <button
                         onClick={() => approveMutation.mutate(loan._id)}
+                        disabled={approveMutation.isPending}
                         className="btn btn-sm btn-success"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => {
-                          setSelectedLoan(loan);
-                          setRejectReason("");
-                        }}
+                        onClick={() => handleRejectClick(loan)}
                         className="btn btn-sm btn-error"
                       >
                         Reject
@@ -119,12 +143,12 @@ const PendingLoans = () => {
         </div>
       )}
 
-      {/* View Modal */}
-      {selectedLoan && !rejectReason && (
+      {/* --- View Modal --- */}
+      {selectedLoan && !isRejecting && (
         <div className="modal modal-open">
           <div className="modal-box max-w-2xl">
-            <h3 className="font-bold text-lg mb-4">Loan Details</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <h3 className="font-bold text-lg mb-4 text-primary">Loan Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div><strong>Name:</strong> {selectedLoan.userName}</div>
               <div><strong>Email:</strong> {selectedLoan.userEmail}</div>
               <div><strong>Amount:</strong> ${selectedLoan.loanAmount}</div>
@@ -133,40 +157,36 @@ const PendingLoans = () => {
               <div><strong>National ID:</strong> {selectedLoan.nationalId}</div>
               <div><strong>Income Source:</strong> {selectedLoan.incomeSource}</div>
               <div><strong>Monthly Income:</strong> ${selectedLoan.monthlyIncome}</div>
-              <div className="col-span-2"><strong>Reason:</strong> {selectedLoan.reason}</div>
+              <div className="col-span-2"><strong>Reason for Loan:</strong> {selectedLoan.reason}</div>
               <div className="col-span-2"><strong>Address:</strong> {selectedLoan.address}</div>
             </div>
             <div className="modal-action">
-              <button onClick={() => setSelectedLoan(null)} className="btn">Close</button>
+              <button onClick={closeModals} className="btn">Close</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Reject Modal */}
-      {selectedLoan && rejectReason !== null && (
+      {/* --- Reject Modal --- */}
+      {selectedLoan && isRejecting && (
         <div className="modal modal-open">
           <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Reject Application</h3>
-            <p className="mb-4">Provide a reason for rejection:</p>
+            <h3 className="font-bold text-lg mb-4 text-error">Reject Application</h3>
+            <p className="mb-4">Provide a clear reason for the borrower:</p>
             <textarea
               className="textarea textarea-bordered w-full h-24"
-              placeholder="Reason for rejection..."
+              placeholder="e.g., Credit score insufficient or documents missing..."
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
             />
             <div className="modal-action">
-              <button
-                onClick={() => {
-                  setSelectedLoan(null);
-                  setRejectReason("");
-                }}
-                className="btn"
+              <button onClick={closeModals} className="btn">Cancel</button>
+              <button 
+                onClick={handleRejectSubmit} 
+                disabled={rejectMutation.isPending}
+                className="btn btn-error"
               >
-                Cancel
-              </button>
-              <button onClick={handleReject} className="btn btn-error">
-                Confirm Reject
+                {rejectMutation.isPending ? "Rejecting..." : "Confirm Reject"}
               </button>
             </div>
           </div>
