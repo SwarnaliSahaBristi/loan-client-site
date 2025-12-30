@@ -2,7 +2,6 @@
 A robust, full-stack Loan Management application featuring multi-role authentication (Admin, Manager, Borrower), real-time loan tracking, and secure payment processing.
 
 🔗 Live Link: https://loanlink2002.netlify.app
-🛠️ Admin Credentials: admin@example.com | password123 (Optional)
 🚀 Key Features
 For Admins & Managers
 User Management: Search, filter, and manage user roles (Admin, Manager, Borrower).
