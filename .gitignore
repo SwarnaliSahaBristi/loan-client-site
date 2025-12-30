@@ -71,4 +71,4 @@ node_modules/
 # Local Netlify folder
 .netlify
 
-.dist
+dist
