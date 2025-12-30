@@ -1,16 +1,48 @@
-# React + Vite
+💰 Loan Management System (LMS)
+A robust, full-stack Loan Management application featuring multi-role authentication (Admin, Manager, Borrower), real-time loan tracking, and secure payment processing.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔗 Live Link: https://loanlink2002.netlify.app
+🛠️ Admin Credentials: admin@example.com | password123 (Optional)
+🚀 Key Features
+For Admins & Managers
+User Management: Search, filter, and manage user roles (Admin, Manager, Borrower).
 
-Currently, two official plugins are available:
+Suspension System: Ability to suspend users with a specific reason and feedback.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Loan Control: Toggle "Show on Home" for loan packages and manage CRUD operations.
 
-## React Compiler
+Interactive Dashboard: Visual data representation using Recharts for revenue and loan distribution.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+For Borrowers
+Personalized Dashboard: Track applied loans and application status (Pending, Approved, Rejected).
 
-## Expanding the ESLint configuration
+Loan Application: Multi-step form with auto-filled user data.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Payment Integration: Pay the $10 application fee securely via Stripe.
+
+Notifications: Real-time feedback via react-hot-toast and SweetAlert2.
+
+🛠️ Tech Stack
+Frontend
+Framework: React 19 (Vite)
+
+Styling: Tailwind CSS 4.0 + Headless UI
+
+State Management: TanStack Query v5 (React Query)
+
+Routing: React Router 7
+
+Animations: Framer Motion
+
+Charts: Recharts
+
+Icons: React Icons
+
+Backend
+Server: Node.js & Express
+
+Database: MongoDB
+
+Auth: Firebase Authentication + JSON Web Tokens (JWT)
+
+Payments: Stripe API

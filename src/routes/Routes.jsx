@@ -47,26 +47,32 @@ export const router = createBrowserRouter([
       },
       {
         path: "/loan-form/:loanId",
-        element: <PrivateRoute>
-          <LoanForm></LoanForm>
-        </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <LoanForm></LoanForm>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/all-loans",
-        element: <PrivateRoute>
-          <AllLoans></AllLoans>
-        </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <AllLoans></AllLoans>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/loan/:loanId",
-        element: <PrivateRoute>
-          <ViewDetails></ViewDetails>
-        </PrivateRoute>,
+        element: (
+          <PrivateRoute>
+            <ViewDetails></ViewDetails>
+          </PrivateRoute>
+        ),
       },
+      { path: "/login", element: <Login /> },
+      { path: "/signup", element: <SignUp /> },
     ],
   },
-  { path: "/login", element: <Login /> },
-  { path: "/signup", element: <SignUp /> },
   {
     path: "/dashboard",
     element: (
