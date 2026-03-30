@@ -56,9 +56,11 @@ const HowItWorks = () => {
             {steps.map((step, index) => (
               <div
                 key={step.id}
-                className={`relative flex flex-col md:flex-row items-center ${
-                  index % 2 === 0 ? "md:flex-row-reverse" : ""
-                }`}
+                className={`relative flex flex-col md:flex-row items-center 
+                  ${index % 2 === 0 ? "md:flex-row-reverse" : ""}
+                  animate-slide-blur
+                `}
+                style={{ animationDelay: `${index * 0.4}s` }}
               >
                 {/* Card */}
                 <div className="md:w-1/2">
@@ -96,6 +98,43 @@ const HowItWorks = () => {
         </div>
 
       </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes slide-blur-left {
+          0% {
+            opacity: 0;
+            transform: translateX(-50px);
+            filter: blur(6px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+            filter: blur(0);
+          }
+        }
+
+        @keyframes slide-blur-right {
+          0% {
+            opacity: 0;
+            transform: translateX(50px);
+            filter: blur(6px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+            filter: blur(0);
+          }
+        }
+
+        .animate-slide-blur {
+          animation: slide-blur-left 0.8s ease forwards;
+        }
+
+        .md\\:flex-row-reverse.animate-slide-blur {
+          animation: slide-blur-right 0.8s ease forwards;
+        }
+      `}</style>
     </section>
   );
 };
