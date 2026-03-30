@@ -17,7 +17,7 @@ const BorrowerHome = () => {
       title: "Apply for Loan",
       desc: "Need financial support? Browse our loan packages and apply today.",
       icon: <FaHandHoldingUsd />,
-      path: "/loan-form",
+      path: "/all-loans",
       color: "bg-green-100 text-green-600",
     },
     {

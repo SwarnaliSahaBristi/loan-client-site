@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import LoanCard from "../../pages/AllLoans/LoanCard";
 import Container from "../Shared/Container";
 import axiosPublic from "../../hooks/useAxiosPublic";
-import LoadingSpinner from "../Shared/LoadingSpinner";
+import LoanCardSkeleton from "../SkeletonLoader/LoanCardSkeleton";
 
 const AvailableLoans = () => {
   const [loans, setLoans] = useState([]);
@@ -10,18 +10,27 @@ const AvailableLoans = () => {
 
   useEffect(() => {
     axiosPublic.get("/loans/home").then((res) => {
+      console.log("API response:", res.data);
       setLoans(res.data);
       setLoading(false);
     });
   }, []);
 
   if (loading) {
-    return <LoadingSpinner></LoadingSpinner>;
+    return (
+    <div className="container mx-auto px-6 py-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[...Array(6)].map((_, i) => (
+          <LoanCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
   }
 
   return (
     <Container>
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      <section id="available-loans" className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section Heading */}
           <div className="text-center mb-14">

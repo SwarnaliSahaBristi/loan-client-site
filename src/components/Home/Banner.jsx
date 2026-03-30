@@ -23,7 +23,7 @@ const Banner = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-            <Link to="/loan-form" className="btn btn-gradient">
+            <Link to="/#available-loans" className="btn btn-gradient">
               Apply for Loan
             </Link>
             <Link to="/all-loans" className="btn btn-outline">

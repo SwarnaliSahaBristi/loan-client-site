@@ -7,6 +7,8 @@ import LoanCard from "./LoanCard";
 import useTitle from "../../components/Usetitle/useTitle";
 import Navbar from "../../components/Shared/Navbar/Navbar";
 import Footer from "../../components/Shared/Footer/Footer";
+import LoanCardSkeleton from "../../components/SkeletonLoader/LoanCardSkeleton";
+import AllLoansSkeleton from "../../components/SkeletonLoader/AllLoansSkeleton";
 
 const AllLoans = () => {
   useTitle("All Loans");
@@ -43,7 +45,7 @@ const AllLoans = () => {
     },
   });
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <AllLoansSkeleton />;
   if (error) return <ErrorPage />;
 
   const { loans = [], total = 0 } = data || {};

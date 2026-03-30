@@ -121,13 +121,13 @@ const Login = () => {
 
         <div
           onClick={handleGoogleSignIn}
-          className="flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer"
+          className="flex justify-center items-center border mt-3 border-gray-300 border-rounded cursor-pointer rounded-2xl w-full py-2"
         >
           <FcGoogle size={32} />
 
           <p>Continue with Google</p>
         </div>
-        <p className="px-6 text-sm text-center text-gray-400">
+        <p className="px-7 text-sm text-center text-gray-400">
           Don&apos;t have an account yet?{" "}
           <Link
             state={from}

@@ -42,7 +42,7 @@ const CustomerFeedback = () => {
   }, []);
 
   return (
-    <section className="relative py-24 bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <section className="relative py-20 bg-gray-50 dark:bg-gray-900 overflow-hidden">
       {/* Glow Background */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-pink-500/30 rounded-full blur-3xl" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl" />

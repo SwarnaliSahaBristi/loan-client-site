@@ -8,17 +8,6 @@ import { AiOutlineBars } from "react-icons/ai";
 
 const Navbar = () => {
   const { user, loading, setUser, logOut } = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
-  useEffect(() => {
-    const html = document.querySelector("html");
-    html.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const handleTheme = (checked) => {
-    setTheme(checked ? "dark" : "light");
-  };
 
   const handleLogOut = () => {
     logOut()
@@ -43,20 +32,16 @@ const Navbar = () => {
           All Loans
         </NavLink>
       </li>
-      {!user && (
-        <>
-          <li>
-            <NavLink to="/about-us" className="nav-link-item">
-              About Us
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/contact" className="nav-link-item">
-              Contact
-            </NavLink>
-          </li>
-        </>
-      )}
+      <li>
+        <NavLink to="/about-us" className="nav-link-item">
+          About Us
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/contact" className="nav-link-item">
+          Contact
+        </NavLink>
+      </li>
       {user && (
         <li>
           <NavLink to="/dashboard" className="nav-link-item">
@@ -120,28 +105,19 @@ const Navbar = () => {
                 <ul className="menu menu-horizontal px-1">{links}</ul>
               </div>
 
-              {/* Theme Toggle */}
-              <input
-                onChange={(e) => handleTheme(e.target.checked)}
-                type="checkbox"
-                defaultChecked={theme === "dark"}
-                className="toggle"
-              />
-
               {/* User Section */}
               {loading ? (
                 <div>Loading...</div>
               ) : user ? (
                 <div className="flex gap-3 items-center">
-                  <img
-                    src={user?.photoURL || "http://www.profile.pic.com"}
-                    alt={user?.displayName || "User"}
-                    referrerPolicy="no-referrer"
-                    className="rounded-full h-12 w-12 cursor-pointer border-2 border-purple-500"
-                  />
-                  <button onClick={handleLogOut} className="btn btn-gradient">
-                    Log Out
-                  </button>
+                  <Link to="/dashboard/profile">
+                    <img
+                      src={user?.photoURL || "http://www.profile.pic.com"}
+                      alt={user?.displayName || "User"}
+                      referrerPolicy="no-referrer"
+                      className="rounded-full h-12 w-12 cursor-pointer border-2 border-purple-500"
+                    />
+                  </Link>
                 </div>
               ) : (
                 <div className="flex gap-4">
