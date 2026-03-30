@@ -64,7 +64,7 @@ const LoanEligibilityPreview = () => {
               </span>
             </p>
 
-            <Link to="/loan-form" className="mt-8 bg-white text-purple-600 px-8 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition">
+            <Link to="/all-loans" className="mt-8 bg-white text-purple-600 px-8 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition">
               Apply for Loan
             </Link>
           </div>

@@ -90,7 +90,7 @@ const HowItWorks = () => {
 
         {/* CTA */}
         <div className="mt-24 text-center">
-          <Link to="/loan-form" className="px-10 py-4 rounded-full font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:scale-105 transition">
+          <Link to="/all-loans" className="px-10 py-4 rounded-full font-semibold text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:scale-105 transition">
             Apply for a Loan
           </Link>
         </div>

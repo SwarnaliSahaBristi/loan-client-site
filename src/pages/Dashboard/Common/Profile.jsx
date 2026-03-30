@@ -15,8 +15,13 @@ const Profile = () => {
   const axiosSecure = useAxiosSecure();
 
   const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark",
+    localStorage.getItem("theme") === "dark"
   );
+
+  // Editable fields
+  const [name, setName] = useState(user?.displayName || "");
+  const [photo, setPhoto] = useState(user?.photoURL || "");
+  const [loading, setLoading] = useState(false);
 
   // Apply theme
   useEffect(() => {
@@ -34,18 +39,37 @@ const Profile = () => {
     return <LoadingSpinner />;
   }
 
+  // Update profile handler
   const handleUpdateProfile = async () => {
-    const updatedData = {
-      name: "New Name",
-      photo: "New Photo URL",
-    };
+    if (!name.trim() || !photo.trim()) {
+      return toast.error("Name and Photo URL cannot be empty!");
+    }
 
+    setLoading(true);
     try {
-      await axiosSecure.patch("/users/profile", updatedData);
+      await axiosSecure.patch("/users/profile", { name, photo });
+
+      // Update local user state
+      setUser({ ...user, displayName: name, photoURL: photo });
 
       toast.success("Profile updated!");
     } catch (err) {
-      toast.error("Update failed");
+      toast.error("Update failed: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Change password handler (Firebase)
+  const handleChangePassword = async () => {
+    const newPassword = prompt("Enter your new password:");
+    if (!newPassword) return toast.error("Password cannot be empty");
+
+    try {
+      await user.updatePassword(newPassword);
+      toast.success("Password updated successfully!");
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
@@ -65,7 +89,7 @@ const Profile = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">My Profile</h2>
 
-          {/* 🌙 Theme Toggle */}
+          {/* Theme Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="btn btn-sm btn-outline"
@@ -75,19 +99,25 @@ const Profile = () => {
         </div>
 
         {/* Profile Info */}
-        <div className="flex flex-col items-center text-center">
+        <div className="flex flex-col items-center text-center mb-6">
           <img
-            src={user?.photoURL || "https://i.ibb.co/4pDNDk1/avatar.png"}
+            src={photo || "https://i.ibb.co/4pDNDk1/avatar.png"}
             alt="profile"
             className="w-28 h-28 rounded-full border-4 border-primary object-cover"
           />
 
-          <h3 className="mt-4 text-xl font-semibold">
-            {user?.displayName || "User"}
-          </h3>
+          {/* Editable Name */}
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-4 text-center border rounded px-2 py-1 w-48"
+          />
 
-          <p className="text-sm text-gray-500">{user?.email}</p>
+          {/* Email */}
+          <p className="text-sm text-gray-500 mt-2">{user?.email}</p>
 
+          {/* Role */}
           <span className="mt-2 px-4 py-1 text-xs bg-primary text-white rounded-full">
             {role}
           </span>
@@ -111,11 +141,25 @@ const Profile = () => {
 
         {/* Actions */}
         <div className="mt-8 flex flex-wrap gap-4 justify-center">
-          <button className="btn btn-gradient">Update Profile</button>
+          <button
+            onClick={handleUpdateProfile}
+            className="btn btn-gradient"
+            disabled={loading}
+          >
+            {loading ? "Updating..." : "Update Profile"}
+          </button>
 
-          <button className="btn btn-outline">Change Password</button>
+          <button
+            onClick={handleChangePassword}
+            className="btn btn-outline"
+          >
+            Change Password
+          </button>
 
-          <button onClick={handleLogOut} className="btn btn-error text-white">
+          <button
+            onClick={handleLogOut}
+            className="btn btn-error text-white"
+          >
             Log Out
           </button>
         </div>
