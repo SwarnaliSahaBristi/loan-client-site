@@ -45,3 +45,14 @@ Database: MongoDB
 Auth: Firebase Authentication + JSON Web Tokens (JWT)
 
 Payments: Stripe API
+
+Make .env file in you main file with this values
+
+VITE_API_URL=http://localhost:3000
+
+VITE_apiKey=your_api_key
+VITE_authDomain=your_auth_domain
+VITE_projectId=your_project_id
+VITE_storageBucket=your_storage_bucket
+VITE_messagingSenderId=your_sender_id
+VITE_appId=your_app_id
