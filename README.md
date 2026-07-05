@@ -108,7 +108,7 @@ http://localhost:5173
 Role	Permissions
 Admin	Full system access
 Manager	Manage loans and users
-Borrower	Apply for loans and make payments
+Borrower	Apply for loans and make payments 
 📈 Core Functionalities
 
 ✅ User Registration & Login
