@@ -30,7 +30,7 @@ Interactive charts and reports
 👤 Borrower Features
 📋 Personalized Dashboard
 View applied loans
-Track loan application status
+Track loan application status 
 Monitor payment history
 📝 Loan Application
 Multi-step application process
