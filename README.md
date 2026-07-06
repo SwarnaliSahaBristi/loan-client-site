@@ -14,7 +14,7 @@ Search and filter users
 Manage user roles (Admin, Manager, Borrower)
 Monitor user activity  
 🚫 User Suspension System
-Suspend users when necessary
+Suspend users when necessary 
 Provide suspension reasons and feedback
 Restrict access for suspended accounts
 🏦 Loan Package Management 
