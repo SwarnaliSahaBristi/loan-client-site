@@ -1,7 +1,7 @@
 💰 Loan Management System (LMS)
 
 A robust full-stack Loan Management System that enables secure loan application, approval, tracking, and payment processing. The platform supports multiple user roles (Admin, Manager, and Borrower) with role-based access control, real-time loan management, and an intuitive dashboard experience.    
- 
+  
 🔗 Live Demo
 
 🌐 Live Site: https://loanlink2002.netlify.app    
