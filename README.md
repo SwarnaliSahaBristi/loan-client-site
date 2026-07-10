@@ -13,7 +13,7 @@ View all registered users
 Search and filter users
 Manage user roles (Admin, Manager, Borrower)
 Monitor user activity  
-🚫 User Suspension System
+🚫 User Suspension System 
 Suspend users when necessary  
 Provide suspension reasons and feedback
 Restrict access for suspended accounts
