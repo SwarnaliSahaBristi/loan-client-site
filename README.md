@@ -11,7 +11,7 @@ A robust full-stack Loan Management System that enables secure loan application,
 👥 User Management 
 View all registered users
 Search and filter users    
-Manage user roles (Admin, Manager, Borrower)
+Manage user roles (Admin, Manager, Borrower) 
 Monitor user activity    
 🚫 User Suspension System    
 Suspend users when necessary   
