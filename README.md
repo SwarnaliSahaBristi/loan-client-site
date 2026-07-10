@@ -7,7 +7,7 @@ A robust full-stack Loan Management System that enables secure loan application,
 🌐 Live Site: https://loanlink2002.netlify.app    
  
 🚀 Features
-👨‍💼 Admin & Manager Features 
+👨‍💼 Admin & Manager Features  
 👥 User Management
 View all registered users
 Search and filter users
