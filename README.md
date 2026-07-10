@@ -8,7 +8,7 @@ A robust full-stack Loan Management System that enables secure loan application,
  
 🚀 Features
 👨‍💼 Admin & Manager Features   
-👥 User Management
+👥 User Management 
 View all registered users
 Search and filter users 
 Manage user roles (Admin, Manager, Borrower)
